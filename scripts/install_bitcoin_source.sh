@@ -1,0 +1,99 @@
+#!/bin/env bash
+
+BTC_VERSION=22.0
+
+echo "** Cloning bitcoin from https://github.com/bitcoin/bitcoin"
+git clone --depth 1 --branch v22.0 https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
+
+echo "*** Installing DB4"
+sh contrib/install_db4.sh .
+
+echo "*** Building Bitcoin"
+./autogen.sh
+export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" \
+  --disable-gui-tests \
+  --enable-static \
+  --without-miniupnpc \
+  --with-pic \
+  --enable-cxx \
+  --with-boost-libdir=/usr/lib/x86_64-linux-gnu
+make -j2
+
+echo "*** Installing bitcoin"
+sudo make install
+
+echo "*** Creating bitcoin conf -> /etc/bitcoin/bitcoin.conf"
+sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
+server=1
+#disablewallet=1
+datadir=/bitcoin
+rpcuser=btcuser
+rpcpassword=btcpass
+rpcallowip=0.0.0.0/0
+bind=0.0.0.0:8333
+rpcbind=0.0.0.0:8332
+dbcache=512
+banscore=1
+rpcthreads=256
+rpcworkqueue=256
+rpctimeout=100
+txindex=1
+EOF'
+
+echo "*** Creating bitcoin user/group and setting filesytem permissions"
+sudo useradd bitcoin
+sudo chown -R bitcoin:bitcoin /bitcoin/
+
+echo "*** Creating systemd unit for bitcoin -> /etc/systemd/system/bitcoin.service"
+sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
+[Unit]
+Description=Bitcoin daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/bitcoind -daemon \
+                            -pid=/run/bitcoind/bitcoind.pid \
+                            -conf=/etc/bitcoin/bitcoin.conf
+
+# Process management
+####################
+Type=forking
+PIDFile=/run/bitcoind/bitcoind.pid
+Restart=on-failure
+TimeoutStopSec=600
+# Directory creation and permissions
+####################################
+# Run as bitcoin:bitcoin
+User=bitcoin
+Group=bitcoin
+RuntimeDirectory=bitcoind
+RuntimeDirectoryMode=0710
+# Hardening measures
+####################
+# Provide a private /tmp and /var/tmp.
+PrivateTmp=true
+# Mount /usr, /boot/ and /etc read-only for the process.
+ProtectSystem=full
+# Deny access to /home, /root and /run/user
+ProtectHome=true
+# Disallow the process and all of its children to gain
+# new privileges through execve().
+NoNewPrivileges=true
+# Use a new /dev namespace only populated with API pseudo devices
+# such as /dev/null, /dev/zero and /dev/random.
+PrivateDevices=true
+
+[Install]
+WantedBy=multi-user.target
+
+EOF'
+
+
+echo "*** Reloading systemd and starting bitcoin service"
+sudo systemctl daemon-reload
+sudo systemctl enable bitcoin.service
+sudo systemctl start bitcoin.service
+
+echo "*** Done"
+echo "*** Tail the bitcoin log: `sudo tail -f /bitcoin/debug.log`" 
+exit 0

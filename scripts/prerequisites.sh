@@ -13,13 +13,12 @@ for dir in "${REQUIRED_DIRS[@]}"; do
     fi
 done
 
-echo "Installing nodejs v16 apt repository"
+echo "*** Installing nodejs v16 apt repository"
 curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
 
-echo "Installing required packages"
-sudo apt-get update -y
-sudo apt-get install -y \
+echo "*** Installing required system packages"
+sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
     jq \
     netcat \
@@ -45,12 +44,14 @@ sudo apt-get install -y \
     libboost-thread-dev \
     libboost-iostreams-dev
 
-echo " Installing Rust"
+echo "*** Installing Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-echo "Installing Stacks CLI"
+echo "*** Installing Stacks CLI"
 sudo npm install -g @stacks/cli rimraf shx
 
-echo "Done."
-echo "be sure to update \$PATH by running: source \$HOME/.cargo/env"
+echo
+echo "*** Done."
+echo "*** Be sure to update \$PATH by running: `source \$HOME/.cargo/env`"
+echo
 exit 0

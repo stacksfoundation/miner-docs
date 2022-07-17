@@ -1,38 +1,48 @@
-# Install Bitcoin
+# Install Bitcoin Blockchain
 
-Choose either method, but bitcoin is required here. Building from source ensures you know what code you are running, but will a while to compile.
+**Note:** `btcuser` and `btcpass` are used for bitcoin RPC auth in this doc. Change as appropriate for your environment (be sure to update any configs etc used in these docs)
+
+Either a source install or running a pre-compiled bitcoin binary is required to run a stacks miner. \
+These instructions describe how to install v22.0 of the Bitcoin Blockchain - update the version number as new versions become available.
 
 ## Binary Install
 
+Since we'll be importing a wallet into bitcoin, it's **highly recommended** that Bitcoin is compiled locally. \
+That said, to run a pre-compiled binary of `bitcoind`, you can download and install the binary using these commands:
+
 ```
-$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-22.0/bitcoin-22.0-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-22.0.tar.gz
-$ sudo tar -xzvf /tmp/bitcoin-22.0.tar.gz -C /tmp
-$ sudo cp /tmp/bitcoin-22.0/bin/* /usr/local/bin/
+$ export BTC_VERSION=22.0
+$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-${BTC_VERSION}/bitcoin-${BTC_VERSION}-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-22.0.tar.gz
+$ sudo tar -xzvf /tmp/bitcoin-${BTC_VERSION}.tar.gz -C /tmp
+$ sudo cp /tmp/bitcoin-${BTC_VERSION}/bin/* /usr/local/bin/
 ```
 
 ## Source Install
 
 ```
-$ git clone --depth 1 --branch v22.0 https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
+$ export BTC_VERSION=22.0
+$ git clone --depth 1 --branch v${BTC_VERSION} https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
 $ sh contrib/install_db4.sh .
 $ ./autogen.sh
 $ export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" \
-  --disable-gui-tests \
-  --enable-static \
-  --without-miniupnpc \
-  --with-pic \
-  --enable-cxx \
-  --with-boost-libdir=/usr/lib/x86_64-linux-gnu
+ --disable-gui-tests \
+ --enable-static \
+ --without-miniupnpc \
+ --with-pic \
+ --enable-cxx \
+ --with-boost-libdir=/usr/lib/x86_64-linux-gnu
 $ make -j2
 $ sudo make install
 ```
 
 ## Bitcoin Config
 
+**Note**: This sample config is open to the world for RPC. It can be restricted to localhost (`127.0.0.1`), **or** you can firewall the VM so it's only accessible from specific IP's.
+
 ```
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
-#disablewallet=1
+disablewallet=0
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
@@ -48,14 +58,14 @@ txindex=1
 EOF'
 ```
 
-## Add bitcoin user and configure dirs
+## Add bitcoin user and set file ownership
 
 ```
 $ sudo useradd bitcoin
 $ sudo chown -R bitcoin:bitcoin /bitcoin/
 ```
 
-## Install bitcoin.service unit
+## Install bitcoin systemd unit
 
 ```
 $ sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
@@ -65,44 +75,48 @@ After=network.target
 
 [Service]
 ExecStart=/usr/local/bin/bitcoind -daemon \
-                            -pid=/run/bitcoind/bitcoind.pid \
-                            -conf=/etc/bitcoin/bitcoin.conf
+ -pid=/run/bitcoind/bitcoind.pid \
+ -conf=/etc/bitcoin/bitcoin.conf
 
-# Process management
+## Process management
 ####################
 Type=forking
 PIDFile=/run/bitcoind/bitcoind.pid
 Restart=on-failure
 TimeoutStopSec=600
-# Directory creation and permissions
-####################################
-# Run as bitcoin:bitcoin
+
+## User management
+####################
 User=bitcoin
 Group=bitcoin
 RuntimeDirectory=bitcoind
 RuntimeDirectoryMode=0710
-# Hardening measures
+
+## Hardening measures
 ####################
-# Provide a private /tmp and /var/tmp.
+## Provide a private /tmp and /var/tmp.
 PrivateTmp=true
-# Mount /usr, /boot/ and /etc read-only for the process.
+
+## Mount /usr, /boot/ and /etc read-only for the process.
 ProtectSystem=full
-# Deny access to /home, /root and /run/user
+
+## Deny access to /home, /root and /run/user
 ProtectHome=true
-# Disallow the process and all of its children to gain
-# new privileges through execve().
+
+## Disallow the process and all of its children to gain
+## new privileges through execve().
 NoNewPrivileges=true
-# Use a new /dev namespace only populated with API pseudo devices
-# such as /dev/null, /dev/zero and /dev/random.
+
+## Use a new /dev namespace only populated with API pseudo devices
+## such as /dev/null, /dev/zero and /dev/random.
 PrivateDevices=true
 
 [Install]
 WantedBy=multi-user.target
-
 EOF'
 ```
 
-## Enable service and start bitcoin
+## Enable bitcoin service and start bitcoin
 
 ```
 $ sudo systemctl daemon-reload
@@ -115,9 +129,13 @@ $ sudo systemctl start bitcoin.service
 ```
 $ sudo tail -f /bitcoin/debug.log
 $ bitcoin-cli \
-  -rpcconnect=localhost \
-  -rpcport=8332 \
-  -rpcuser=btcuser \
-  -rpcpassword=btcpass \
+ -rpcconnect=localhost \
+ -rpcport=8332 \
+ -rpcuser=btcuser \
+ -rpcpassword=btcpass \
 getblockchaininfo | jq .blocks
 ```
+
+## Next Step(s)
+
+[Installing Stacks Blockchain](./stacks-blockchain.md)
