@@ -128,12 +128,17 @@ $ sudo systemctl start bitcoin.service
 
 ```
 $ sudo tail -f /bitcoin/debug.log
+2022-07-19T14:33:12Z UpdateTip: new best=00000000000000000003c9ed0f9961b984e40082faa35bb9244f47ba0d68d6f2 height=745635 version=0x27ffe004 log2_work=93.635332 tx=750040284 date='2022-07-19T14:32:43Z' progress=1.000000 cache=161.3MiB(1219743txo)
+2022-07-19T14:33:25Z New outbound peer connected: version: 70015, blocks=745635, peer=118 (block-relay-only)
+...
+
 $ bitcoin-cli \
  -rpcconnect=localhost \
  -rpcport=8332 \
  -rpcuser=btcuser \
  -rpcpassword=btcpass \
 getblockchaininfo | jq .blocks
+745635
 ```
 
 ## Next Step(s)

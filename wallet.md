@@ -1,6 +1,8 @@
 # Wallet Generation
 
-Note: this method creates a new stacks address (with corresponding Bitcoin address).
+**NOTE**: the values in this sample keychain output are not valid and is used for this example only. Your output _will_ look different.
+
+This method creates a new stacks address (with corresponding Bitcoin address).
 It's also fine to use an already existing stacks/bitcoin address(es)
 
 **values shown below are 100% fake and are for documentation purposes only**
@@ -27,6 +29,7 @@ $ npx @stacks/cli make_keychain 2>/dev/null | jq
 ## Create bitcoin wallet and import it into this instance
 
 We'll be using the wallet values from the previous `npx` command, "btcAddress" and "wif"
+_Import will only be successful after bitcoin has fully synced_
 
 ```bash
 $ bitcoin-cli \

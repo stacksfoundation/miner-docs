@@ -3,42 +3,29 @@
 ## Build and install stacks-blockchain from source
 
 ```bash
-$ git clone https://github.com/stacks-network/stacks-blockchain.git $HOME/stacks-blockchain
+$ git clone --depth 1 --branch master https://github.com/stacks-network/stacks-blockchain.git $HOME/stacks-blockchain
 $ cd $HOME/stacks-blockchain/testnet/stacks-node
 $ cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 $ sudo cp -a $HOME/stacks-blockchain/target/release/stacks-node /usr/local/bin/stacks-node
 ```
 
+### Generate stacks wallet keychain
+
+(Follow instructions here)[./wallet.md]
+
+## Create stacks-blockchain Config.toml
+
+**replace `seed` and `local_peer_seed` with the `privateKey` value from the previous step**
+
 ```bash
-$ sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/follower.toml
+$ sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/Config.toml
 [node]
 working_dir = "/stacks-blockchain"
 rpc_bind = "0.0.0.0:20443"
 p2p_bind = "0.0.0.0:20444"
 bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459d36b@seed-0.mainnet.stacks.co:20444,02afeae522aab5f8c99a00ddf75fbcb4a641e052dd48836408d9cf437344b63516@seed-1.mainnet.stacks.co:20444,03652212ea76be0ed4cd83a25c06e57819993029a7b9999f7d63c36340b34a4e62@seed-2.mainnet.stacks.co:20444"
-
-[burnchain]
-chain = "bitcoin"
-mode = "mainnet"
-peer_host = "127.0.0.1"
-username = "btcuser"
-password = "btcpass"
-rpc_port = 8332
-peer_port = 8333
-EOF'
-```
-
-**replace `seed` and `local_peer_seed` with the `privateKey` value from the previous `npx` command**
-
-```bash
-$ sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/miner.toml
-[node]
-working_dir = "/stacks-blockchain"
-rpc_bind = "0.0.0.0:20443"
-p2p_bind = "0.0.0.0:20444"
-bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459d36b@seed-0.mainnet.stacks.co:20444,02afeae522aab5f8c99a00ddf75fbcb4a641e052dd48836408d9cf437344b63516@seed-1.mainnet.stacks.co:20444,03652212ea76be0ed4cd83a25c06e57819993029a7b9999f7d63c36340b34a4e62@seed-2.mainnet.stacks.co:20444"
-seed = "<npx privateKey>"
-local_peer_seed = "<npx privateKey>"
+seed = "<npx privateKey from wallet.md>"
+local_peer_seed = "<npx privateKey from wallet.md>"
 miner = true
 mine_microblocks = true
 wait_time_for_microblocks = 10000
@@ -47,10 +34,10 @@ wait_time_for_microblocks = 10000
 chain = "bitcoin"
 mode = "mainnet"
 peer_host = "127.0.0.1"
-username = "btcuser"
-password = "btcpass"
-rpc_port = 8332
-peer_port = 8333
+username = "btcuser" # bitcoin rpc username from bitcoin config
+password = "btcpass" # bitcoin rpc password from bitcoin config
+rpc_port = 8332      # bitcoin rpc port from bitcoin config
+peer_port = 8333     # bitcoin p2p port from bitcoin config
 satoshis_per_byte = 100
 #burn_fee_cap = 20000
 burn_fee_cap = 450000
@@ -88,8 +75,8 @@ ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
 
 [Service]
-ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/follower.toml >> /stacks-blockchain/follower.log 2>&1"
-ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/follower.toml\" > /run/stacks-blockchain/stacks.pid"
+ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
+ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
 ExecStopPost=/bin/sh -c "if [ -f \"/run/stacks-blockchain/stacks.pid\" ]; then rm -f /run/stacks-blockchain/stacks.pid; fi"
 
 # Process management

@@ -2,22 +2,23 @@
 
 REQUIRED_DIRS=(
     /bitcoin
-    /stacks-blockchain
     /etc/bitcoin
     /etc/stacks-blockchain
+    /stacks-blockchain
 )
-for dir in "${REQUIRED_DIRS[@]}"; do
-    if [ ! -d $dir ]; then
-        echo "Creating missing dir: $dir"
-        sudo mkdir -p $dir
+
+for DIR in "${REQUIRED_DIRS[@]}"; do
+    if [ ! -d "${DIR}" ]; then
+        echo "[ prerequisites.sh  ] - Creating missing dir: ${DIR}"
+        sudo mkdir -p "${DIR}"
     fi
 done
 
-echo "*** Installing nodejs v16 apt repository"
+echo "[ prerequisites.sh ] - Installing nodejs v16 apt repository"
 curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
 
-echo "*** Installing required system packages"
+echo "[ prerequisites.sh ] - Installing required system packages"
 sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
     jq \
@@ -44,14 +45,14 @@ sudo apt-get update -y && sudo apt-get install -y \
     libboost-thread-dev \
     libboost-iostreams-dev
 
-echo "*** Installing Rust"
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+echo "[ prerequisites.sh ] - Installing Rust"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-echo "*** Installing Stacks CLI"
+echo "[ prerequisites.sh ] - Installing Stacks CLI"
 sudo npm install -g @stacks/cli rimraf shx
 
 echo
-echo "*** Done."
-echo "*** Be sure to update \$PATH by running: `source \$HOME/.cargo/env`"
+echo "[ prerequisites.sh ] - Done."
+echo "[ prerequisites.sh ] - Be sure to update \$PATH by running: source \$HOME/.cargo/env"
 echo
 exit 0

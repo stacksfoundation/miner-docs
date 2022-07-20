@@ -2,13 +2,25 @@
 
 BTC_VERSION=22.0
 
-echo "** Cloning bitcoin from https://github.com/bitcoin/bitcoin"
-git clone --depth 1 --branch v22.0 https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
+REQUIRED_DIRS=(
+    /bitcoin
+    /etc/bitcoin
+)
 
-echo "*** Installing DB4"
+for DIR in "${REQUIRED_DIRS[@]}"; do
+    if [ ! -d "${DIR}" ]; then
+        echo "[ install_bitcoin.sh  ] - Creating missing dir: $DIR"
+        sudo mkdir -p "${DIR}"
+    fi
+done
+
+echo "[ install_bitcoin.sh ] - Cloning bitcoin from https://github.com/bitcoin/bitcoin"
+git clone --depth 1 --branch v${BTC_VERSION} https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin || exit 1
+
+echo "[ install_bitcoin.sh ] - Installing DB4"
 sh contrib/install_db4.sh .
 
-echo "*** Building Bitcoin"
+echo "[ install_bitcoin.sh ] - Building Bitcoin"
 ./autogen.sh
 export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" \
   --disable-gui-tests \
@@ -19,13 +31,18 @@ export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/li
   --with-boost-libdir=/usr/lib/x86_64-linux-gnu
 make -j2
 
-echo "*** Installing bitcoin"
+exit 0
+echo "[ install_bitcoin.sh ] - Installing bitcoin"
 sudo make install
 
-echo "*** Creating bitcoin conf -> /etc/bitcoin/bitcoin.conf"
+echo "[ install_bitcoin.sh ] - Creating bitcoin user/group and setting filesytem permissions"
+sudo useradd bitcoin
+sudo chown -R bitcoin:bitcoin /bitcoin/
+
+echo "[ install_bitcoin.sh ] - Creating bitcoin conf -> /etc/bitcoin/bitcoin.conf"
 sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
-#disablewallet=1
+disablewallet=0
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
@@ -40,11 +57,8 @@ rpctimeout=100
 txindex=1
 EOF'
 
-echo "*** Creating bitcoin user/group and setting filesytem permissions"
-sudo useradd bitcoin
-sudo chown -R bitcoin:bitcoin /bitcoin/
 
-echo "*** Creating systemd unit for bitcoin -> /etc/systemd/system/bitcoin.service"
+echo "[ install_bitcoin.sh ] - Creating systemd unit for bitcoin -> /etc/systemd/system/bitcoin.service"
 sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
 [Unit]
 Description=Bitcoin daemon
@@ -89,11 +103,11 @@ WantedBy=multi-user.target
 EOF'
 
 
-echo "*** Reloading systemd and starting bitcoin service"
+echo "[ install_bitcoin.sh ] - Reloading systemd and starting bitcoin service"
 sudo systemctl daemon-reload
 sudo systemctl enable bitcoin.service
 sudo systemctl start bitcoin.service
 
-echo "*** Done"
-echo "*** Tail the bitcoin log: `sudo tail -f /bitcoin/debug.log`" 
+echo "[ install_bitcoin.sh ] - Done"
+echo "[ install_bitcoin.sh ] - Tail the bitcoin log: sudo tail -f /bitcoin/debug.log" 
 exit 0
