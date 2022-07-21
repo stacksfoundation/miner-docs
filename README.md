@@ -16,6 +16,7 @@ Check the VM requirements first in [prerequisites.md](./prerequisites.md) to ens
 _Note that `sudo` is required_
 
 - Initial package setup: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
+- _if using a separate disks for chainstate, mount them now_ i.e. `sudo mount /dev/xvdf1 /bitcoin`
 - Install Bitcoin: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash`
   **Once Bitcoin has fully synced from genesis, the final script can be run**
 - Install Stacks Blockchain: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash`
