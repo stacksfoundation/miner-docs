@@ -192,6 +192,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable stacks.service
 if [ ${START_STACKS} ]; then
     sudo systemctl start stacks.service
+    echo "[ install_stacks.sh ] - Stacks Address: ${STX_ADDRESS}"
+    echo "[ install_stacks.sh ] - Bitcoin Address: ${BTC_ADDRESS}"
+    echo 
+    echo "[ install_stacks.sh ] - *******************************************************************************"
+    echo "[ install_stacks.sh ] - **    Keychain file is stored at /root/keychain.json                         **"
+    echo "[ install_stacks.sh ] - **    Highly recommend that it be copied off the host to a secure location   **"
+    echo "[ install_stacks.sh ] - *******************************************************************************"
+    echo
     echo "[ install_stacks.sh ] - Tail the stacks-blockchain log: sudo tail -f /stacks-blockchain/miner.log" 
 else
     echo "[ install_stacks.sh ] - Follow the instructions in ../keychain.md"
@@ -199,10 +207,5 @@ else
     echo "[ install_stacks.sh ] -     Replace 'privateKey from npx keychain' with 'privateKey' from the make_keychain command"
     echo "[ install_stacks.sh ] - Start the Stacks Blockchain: sudo systemctl start stacks.service"
 fi
-echo "[ install_stacks.sh ] - Done"
-echo "[ install_stacks.sh ] - Stacks Address: ${STX_ADDRESS}"
-echo "[ install_stacks.sh ] - Bitcoin Address: ${BTC_ADDRESS}"
-echo
-echo "[ install_stacks.sh ] - Tail the stacks-blockchain log: sudo tail -f /stacks-blockchain/miner.log" 
 exit 0
 

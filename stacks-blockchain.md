@@ -1,5 +1,9 @@
 # Stacks Blockchain Miner
 
+## Scripted install
+
+`curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash`
+
 ## Build and install stacks-blockchain from source
 
 ```bash

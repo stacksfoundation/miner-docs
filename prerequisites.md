@@ -47,6 +47,10 @@ Example:
 
 Mount the disks `sudo mount -a`
 
+## Scripted install
+
+`curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
+
 ## Install required packages
 
 The following packages are required, and used by the rest of these docs

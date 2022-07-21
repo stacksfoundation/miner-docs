@@ -1,8 +1,20 @@
-# miner-docs
+# Stacks Blockchain Miner setup
 
-Docs for setting up a stacks-blockchain miner
+Simple docs/scripts for setting up a miner on a Debian x86_64 based VM.
 
-1. prerequisites.md
-2. bitcoin.md
-3. wallet.md
-4. stacks-blockchain.md
+## Manual Setup
+
+- [prerequisites.md](./prerequisites.md)
+- [bitcoin.md](./bitcoin.md)
+- [stacks-blockchain.md](./stacks-blockchain.md)
+
+The steps in `stacks-blockchain.md` will link to some required steps in [wallet.md](./wallet.md)
+
+## Scripted Setup
+
+Check the VM requirements first in [prerequisites.md](./prerequisites.md) to ensure you have a compatible VM for mining.
+
+- Initial package setup: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
+- Install Bitcoin: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash`
+  **Once Bitcoin has fully synced from genesis, the final script can be run**
+- Install Stacks Blockchain: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash`

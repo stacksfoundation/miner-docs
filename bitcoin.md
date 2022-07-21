@@ -5,6 +5,10 @@
 Either a source install or running a pre-compiled bitcoin binary is required to run a stacks miner. \
 These instructions describe how to install v22.0 of the Bitcoin Blockchain - update the version number as new versions become available.
 
+## Scripted install
+
+`curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash`
+
 ## Binary Install
 
 Since we'll be importing a wallet into bitcoin, it's **highly recommended** that Bitcoin is compiled locally. \

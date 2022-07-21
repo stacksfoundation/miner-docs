@@ -7,6 +7,10 @@ It's also fine to use an already existing stacks/bitcoin address(es)
 
 **values shown below are 100% fake and are for documentation purposes only**
 
+## Scripted install
+
+If using the **Scripted install** section of [stacks-blockchain.md](./stacks-blockchain.md), and you opted to let the script created the keychain (stored at `/root/keychain.json`) then the following steps aren't needed.
+
 ## Generate stacks-blockchain keychain
 
 **save this output in a safe place!**
