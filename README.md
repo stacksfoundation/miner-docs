@@ -12,7 +12,8 @@ The steps in `stacks-blockchain.md` will link to some required steps in [wallet.
 
 ## Scripted Setup
 
-Check the VM requirements first in [prerequisites.md](./prerequisites.md) to ensure you have a compatible VM for mining.
+Check the VM requirements first in [prerequisites.md](./prerequisites.md) to ensure you have a compatible VM for mining. \
+_Note that `sudo` is required_
 
 - Initial package setup: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
 - Install Bitcoin: `curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash`
