@@ -1,17 +1,5 @@
 #!/bin/env bash
 
-### Function to ask for confirmation. Loop until valid input is received
-confirm() {
-	### y/n confirmation. loop until valid response is received
-	while true; do
-		read -r -n 1 -p "${1:-Continue?} [y/n]: " REPLY
-		case ${REPLY} in
-			[yY]) echo ; return 0 ;;
-			[nN]) echo ; return 1 ;;
-			*) printf "\\033[31m %s \\n\\033[0m" "invalid input"
-		esac 
-	done  
-}
 
 REQUIRED_DIRS=(
     /etc/stacks-blockchain
@@ -42,58 +30,54 @@ sudo chown -R stacks:stacks /stacks-blockchain/
 PRIV_KEY="privateKey from npx keychain"
 WIF="privateKey from npx keychain"
 BTC_ADDRESS="btcAddress from npx keychain"
-START_STACKS=false
 echo "[ install_stacks.sh ] - Installing required js modules"
 cd "${HOME}" && npm install @stacks/cli shx rimraf
 SCAN_TIME_EPOCH=$(($(date +%s) - 3600)) # scan from 1 hour ago
 
-echo "[ install_stacks.sh ] - Use script to generate keychain file?"
-if confirm "[ install_stacks.sh ] - Use script to generate keychain file?"; then
-    CMD="sudo ls /root/keychain.json  2> /dev/null 1>/dev/null"
-    eval "${CMD}"
-	CHECK_KEYCHAIN_FILE="${?}"
-    if [ ${CHECK_KEYCHAIN_FILE} != "0" ]; then
-        echo "[ install_stacks.sh ] - Creating keychain file -> /root/keychain.json"
-        sudo bash -c 'npx @stacks/cli make_keychain 2>/dev/null > /root/keychain.json'
-    else
-        echo "[ install_stacks.sh ] - Using existing keychain file -> /root/keychain.json"
-    fi
-    PRIV_KEY=$(sudo cat  /root/keychain.json | jq .keyInfo.privateKey | tr -d '"')
-    WIF=$(sudo cat  /root/keychain.json | jq .keyInfo.wif | tr -d '"')
-    BTC_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.btcAddress | tr -d '"')
-    STX_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.address | tr -d '"')
-    START_STACKS=true
+echo "[ install_stacks.sh ] - Generating keychain file?"
+CMD="sudo ls /root/keychain.json  2> /dev/null 1>/dev/null"
+eval "${CMD}"
+CHECK_KEYCHAIN_FILE="${?}"
+if [ ${CHECK_KEYCHAIN_FILE} != "0" ]; then
+    echo "[ install_stacks.sh ] - Creating keychain file -> /root/keychain.json"
+    sudo bash -c 'npx @stacks/cli make_keychain 2>/dev/null > /root/keychain.json'
+else
+    echo "[ install_stacks.sh ] - Using existing keychain file -> /root/keychain.json"
+fi
+PRIV_KEY=$(sudo cat  /root/keychain.json | jq .keyInfo.privateKey | tr -d '"')
+WIF=$(sudo cat  /root/keychain.json | jq .keyInfo.wif | tr -d '"')
+BTC_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.btcAddress | tr -d '"')
+STX_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.address | tr -d '"')
 
-    if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
-        echo "[ install_stacks.sh ] - Creating bitcoin wallet"
-        bitcoin-cli \
-            -rpcconnect=localhost \
-            -rpcport=8332 \
-            -rpcuser=btcuser \
-            -rpcpassword=btcpass \
-            createwallet "miner"
-
-        echo "[ install_stacks.sh ] - Restarting bitcoin"
-        sudo systemctl restart bitcoin
-        echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
-        sleep 120
-
-        echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
-        bitcoin-cli \
-            -rpcconnect=localhost \
-            -rpcport=8332 \
-            -rpcuser=btcuser \
-            -rpcpassword=btcpass \
-            importmulti "[{ \"scriptPubKey\": { \"address\": \"${BTC_ADDRESS}\" }, \"timestamp\":${SCAN_TIME_EPOCH}, \"keys\": [ \"${WIF}\" ]}]" "{\"rescan\": true}"
-    fi
-    echo "[ install_stacks.sh ] - Bitcoin address info for ${BTC_ADDRESS}"
+if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
+    echo "[ install_stacks.sh ] - Creating bitcoin wallet"
     bitcoin-cli \
         -rpcconnect=localhost \
         -rpcport=8332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
-        getaddressinfo "${BTC_ADDRESS}"
+        createwallet "miner"
+
+    echo "[ install_stacks.sh ] - Restarting bitcoin"
+    sudo systemctl restart bitcoin
+    echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
+    sleep 120
+
+    echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
+    bitcoin-cli \
+        -rpcconnect=localhost \
+        -rpcport=8332 \
+        -rpcuser=btcuser \
+        -rpcpassword=btcpass \
+        importmulti "[{ \"scriptPubKey\": { \"address\": \"${BTC_ADDRESS}\" }, \"timestamp\":${SCAN_TIME_EPOCH}, \"keys\": [ \"${WIF}\" ]}]" "{\"rescan\": true}"
 fi
+echo "[ install_stacks.sh ] - Bitcoin address info for ${BTC_ADDRESS}"
+bitcoin-cli \
+    -rpcconnect=localhost \
+    -rpcport=8332 \
+    -rpcuser=btcuser \
+    -rpcpassword=btcpass \
+    getaddressinfo "${BTC_ADDRESS}"
 
 echo "[ install_stacks.sh ] - Creating stacks config -> /etc/stacks-blockchain/Config.toml"
 sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/Config.toml
@@ -190,22 +174,15 @@ EOF'
 echo "[ install_stacks.sh ] - Reloading systemd and starting stacks-blockchain service"
 sudo systemctl daemon-reload
 sudo systemctl enable stacks.service
-if [ ${START_STACKS} ]; then
-    sudo systemctl start stacks.service
-    echo "[ install_stacks.sh ] - Stacks Address: ${STX_ADDRESS}"
-    echo "[ install_stacks.sh ] - Bitcoin Address: ${BTC_ADDRESS}"
-    echo 
-    echo "[ install_stacks.sh ] - *******************************************************************************"
-    echo "[ install_stacks.sh ] - **    Keychain file is stored at /root/keychain.json                         **"
-    echo "[ install_stacks.sh ] - **    Highly recommend that it be copied off the host to a secure location   **"
-    echo "[ install_stacks.sh ] - *******************************************************************************"
-    echo
-    echo "[ install_stacks.sh ] - Tail the stacks-blockchain log: sudo tail -f /stacks-blockchain/miner.log" 
-else
-    echo "[ install_stacks.sh ] - Follow the instructions in ../keychain.md"
-    echo "[ install_stacks.sh ] - Update /etc/stacks-blockchain/Config.toml:"
-    echo "[ install_stacks.sh ] -     Replace 'privateKey from npx keychain' with 'privateKey' from the make_keychain command"
-    echo "[ install_stacks.sh ] - Start the Stacks Blockchain: sudo systemctl start stacks.service"
-fi
+sudo systemctl start stacks.service
+echo "[ install_stacks.sh ] - Stacks Address: ${STX_ADDRESS}"
+echo "[ install_stacks.sh ] - Bitcoin Address: ${BTC_ADDRESS}"
+echo 
+echo "[ install_stacks.sh ] - *******************************************************************************"
+echo "[ install_stacks.sh ] - **    Keychain file is stored at /root/keychain.json                         **"
+echo "[ install_stacks.sh ] - **    Highly recommend that it be copied off the host to a secure location   **"
+echo "[ install_stacks.sh ] - *******************************************************************************"
+echo
+echo "[ install_stacks.sh ] - Tail the stacks-blockchain log: sudo tail -f /stacks-blockchain/miner.log" 
 exit 0
 
