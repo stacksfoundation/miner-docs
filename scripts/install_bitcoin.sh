@@ -31,7 +31,6 @@ export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/li
   --with-boost-libdir=/usr/lib/x86_64-linux-gnu
 make -j2
 
-exit 0
 echo "[ install_bitcoin.sh ] - Installing bitcoin"
 sudo make install
 
