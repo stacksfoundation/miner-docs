@@ -126,3 +126,9 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl enable stacks.service
 $ sudo systemctl start stacks.service
 ```
+
+Alternatively, you can use the [scripts/install_stacks.sh](./scripts/install_stacks.sh) to install and start stacks-blockchain:
+
+```bash
+$ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash`
+```

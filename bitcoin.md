@@ -128,6 +128,12 @@ $ sudo systemctl enable bitcoin.service
 $ sudo systemctl start bitcoin.service
 ```
 
+Alternatively, you can use the [scripts/install_bitcoin.sh](./scripts/install_bitcoin.sh) to install and start bitcoin:
+
+```bash
+$ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash`
+```
+
 **now we wait a few days until bitcoin syncs to chain tip**
 
 ```

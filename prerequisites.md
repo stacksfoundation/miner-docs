@@ -86,7 +86,11 @@ $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && source $HOME
 $ sudo npm install -g @stacks/cli rimraf shx
 ```
 
-Alternatively, you can use the [scripts/install-prerequisites.sh](./scripts/prerequisites.sh) to install everything: `curl commaand | bash`
+Alternatively, you can use the [scripts/prerequisites.sh](./scripts/prerequisites.sh) to install everything:
+
+```bash
+$ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
+```
 
 ## Next Step(s)
 
