@@ -15,7 +15,7 @@ $ sudo cp -a $HOME/stacks-blockchain/target/release/stacks-node /usr/local/bin/s
 
 ### Generate stacks wallet keychain
 
-(Follow instructions here)[./wallet.md]
+[Follow instructions here](./wallet.md)
 
 ## Create stacks-blockchain Config.toml
 
