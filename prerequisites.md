@@ -48,8 +48,10 @@ Example:
 Mount the disks `sudo mount -a`
 
 ## Scripted install
-
-`curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
+You can use the [scripts/prerequisites.sh](./scripts/prerequisites.sh) to install everything:
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash
+```
 
 ## Install required packages
 
@@ -84,12 +86,6 @@ $ sudo apt-get update -y && sudo apt-get install -y \
     libboost-iostreams-dev
 $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && source $HOME/.cargo/env
 $ sudo npm install -g @stacks/cli rimraf shx
-```
-
-Alternatively, you can use the [scripts/prerequisites.sh](./scripts/prerequisites.sh) to install everything:
-
-```bash
-$ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/prerequisites.sh | bash`
 ```
 
 ## Next Step(s)
