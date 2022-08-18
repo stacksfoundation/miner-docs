@@ -7,8 +7,8 @@ Simple docs/scripts for setting up a miner on a Debian x86_64 based VM.
 - [prerequisites.md](./prerequisites.md)
 - [bitcoin.md](./bitcoin.md)
 - [stacks-blockchain.md](./stacks-blockchain.md)
+  - **Note**: Will link to some required steps in [wallet.md](./wallet.md)
 
-The steps in `stacks-blockchain.md` will link to some required steps in [wallet.md](./wallet.md)
 
 ## Scripted Setup
 
