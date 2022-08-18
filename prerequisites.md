@@ -3,7 +3,7 @@
 ## VM setup
 
 The VM will not need a lot of resources to run a miner - the most resources will be consumed during the blockchain syncs (for both Bitcoin and Stacks).
-For this example, we'll be assuming a [**Debian**](https://www.debian.org/) host with x86*64 architecture (\_commands may also work on any Debian-derived distribution*)
+For this example, we'll be assuming a [**Debian**](https://www.debian.org/) host with `x86_64` architecture (*commands may also work on any Debian-derived distribution*)
 
 A single CPU system with at least 4GB of memory and 1TB of disk space should be considered the minimum required specs to run the miner.
 
