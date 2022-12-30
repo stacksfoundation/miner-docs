@@ -46,19 +46,22 @@ $ sudo make install
 ```
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
-disablewallet=0
+testnet=1
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
 rpcallowip=0.0.0.0/0
-bind=0.0.0.0:8333
-rpcbind=0.0.0.0:8332
 dbcache=512
 banscore=1
 rpcthreads=256
 rpcworkqueue=256
 rpctimeout=100
 txindex=1
+
+[test]
+bind=0.0.0.0:18333
+rpcbind=0.0.0.0:18332
+rpcport=18332
 EOF'
 ```
 
@@ -137,7 +140,7 @@ $ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksf
 **now we wait a few days until bitcoin syncs to chain tip**
 
 ```
-$ sudo tail -f /bitcoin/debug.log
+$ sudo tail -f /bitcoin/testnet3/debug.log
 2022-07-19T14:33:12Z UpdateTip: new best=00000000000000000003c9ed0f9961b984e40082faa35bb9244f47ba0d68d6f2 height=745635 version=0x27ffe004 log2_work=93.635332 tx=750040284 date='2022-07-19T14:32:43Z' progress=1.000000 cache=161.3MiB(1219743txo)
 2022-07-19T14:33:25Z New outbound peer connected: version: 70015, blocks=745635, peer=118 (block-relay-only)
 ...

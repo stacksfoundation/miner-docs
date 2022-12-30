@@ -14,7 +14,7 @@ for DIR in "${REQUIRED_DIRS[@]}"; do
 done
 
 echo "[ install_stacks.sh ] - Cloning stacks-blockchain from https://github.com/stacks-network/stacks-blockchain"
-git clone --depth 1 --branch master https://github.com/stacks-network/stacks-blockchain "${HOME}/stacks-blockchain" && cd "${HOME}/stacks-blockchain/testnet/stacks-node" || exit 1
+git clone --depth 1 --branch feat/check-pox-2-params https://github.com/stacks-network/stacks-blockchain "${HOME}/stacks-blockchain" && cd "${HOME}/stacks-blockchain/testnet/stacks-node" || exit 1
 
 echo "[ install_stacks.sh ] - Build and install stacks-blockchain binary -> /usr/local/bin/stacks-node"
 cargo build --features monitoring_prom,slog_json --release --bin stacks-node
@@ -82,39 +82,51 @@ bitcoin-cli \
 echo "[ install_stacks.sh ] - Creating stacks config -> /etc/stacks-blockchain/Config.toml"
 sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/Config.toml
 [node]
-working_dir = "/stacks-blockchain"
+working_dir = "/stacks-blockchain/data"
 rpc_bind = "0.0.0.0:20443"
 p2p_bind = "0.0.0.0:20444"
-bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459d36b@seed-0.mainnet.stacks.co:20444,02afeae522aab5f8c99a00ddf75fbcb4a641e052dd48836408d9cf437344b63516@seed-1.mainnet.stacks.co:20444,03652212ea76be0ed4cd83a25c06e57819993029a7b9999f7d63c36340b34a4e62@seed-2.mainnet.stacks.co:20444"
 seed = "PRIV_KEY"
-local_peer_seed = "PRIV_KEY"
 miner = true
+prometheus_bind = "0.0.0.0:9153"
 mine_microblocks = true
-wait_time_for_microblocks = 10000
-
-[burnchain]
-chain = "bitcoin"
-mode = "mainnet"
-peer_host = "127.0.0.1"
-username = "btcuser" # bitcoin rpc username from bitcoin config
-password = "btcpass" # bitcoin rpc password from bitcoin config
-rpc_port = 8332      # bitcoin rpc port from bitcoin config
-peer_port = 8333     # bitcoin p2p port from bitcoin config
-satoshis_per_byte = 100
-#burn_fee_cap = 20000
-burn_fee_cap = 450000
+wait_time_for_microblocks = 0
+bootstrap_node = "027e929237cc4c12980b109bd3180ca591f3b72896b6e3716f5d1dce0a5bdd2dc4@next.stacks.org:20444"
+name = "xenon-node-2.1"
 
 [miner]
 first_attempt_time_ms = 5000
-subsequent_attempt_time_ms = 180000
-microblock_attempt_time_ms = 30000
+subsequent_attempt_time_ms = 15000
+microblock_attempt_time_ms = 5000
 
-[fee_estimation]
-cost_estimator = "naive_pessimistic"
-fee_estimator = "scalar_fee_rate"
-cost_metric = "proportion_dot_product"
-log_error = true
-enabled = true
+[burnchain]
+chain = "bitcoin"
+mode = "xenon"
+peer_host = "127.0.0.1"
+username = "btcuser" # bitcoin rpc username from bitcoin config
+password = "btcpass" # bitcoin rpc password from bitcoin config
+rpc_port = 18332      # bitcoin rpc port from bitcoin config
+peer_port = 18333     # bitcoin p2p port from bitcoin config
+burn_fee_cap = 10000
+satoshis_per_byte = 10
+rbf_fee_increment = 5
+max_rbf = 150
+magic_bytes = "21"
+
+[[ustx_balance]]
+address = "ST2QKZ4FKHAH1NQKYKYAYZPY440FEPK7GZ1R5HBP2"
+amount = 10000000000000000
+
+[[ustx_balance]]
+address = "ST319CF5WV77KYR1H3GT0GZ7B8Q4AQPY42ETP1VPF"
+amount = 10000000000000000
+
+[[ustx_balance]]
+address = "ST221Z6TDTC5E0BYR2V624Q2ST6R0Q71T78WTAX6H"
+amount = 10000000000000000
+
+[[ustx_balance]]
+address = "ST2TFVBMRPS5SSNP98DQKQ5JNB2B6NZM91C4K3P7B"
+amount = 10000000000000000
 EOF'
 
 echo "[ install_stacks.sh ] - Updating /etc/stacks-blockchain/Config.toml with privateKey"

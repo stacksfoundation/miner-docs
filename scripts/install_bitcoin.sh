@@ -41,19 +41,22 @@ sudo chown -R bitcoin:bitcoin /bitcoin/
 echo "[ install_bitcoin.sh ] - Creating bitcoin conf -> /etc/bitcoin/bitcoin.conf"
 sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
-disablewallet=0
+testnet=1
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
 rpcallowip=0.0.0.0/0
-bind=0.0.0.0:8333
-rpcbind=0.0.0.0:8332
 dbcache=512
 banscore=1
 rpcthreads=256
 rpcworkqueue=256
 rpctimeout=100
 txindex=1
+
+[test]
+bind=0.0.0.0:18333
+rpcbind=0.0.0.0:18332
+rpcport=18332
 EOF'
 
 
@@ -108,5 +111,5 @@ sudo systemctl enable bitcoin.service
 sudo systemctl start bitcoin.service
 
 echo "[ install_bitcoin.sh ] - Done"
-echo "[ install_bitcoin.sh ] - Tail the bitcoin log: sudo tail -f /bitcoin/debug.log" 
+echo "[ install_bitcoin.sh ] - Tail the bitcoin log: sudo tail -f /bitcoin/testnet3/debug.log" 
 exit 0
