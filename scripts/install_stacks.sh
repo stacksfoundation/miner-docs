@@ -53,7 +53,7 @@ if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
     echo "[ install_stacks.sh ] - Creating bitcoin wallet"
     bitcoin-cli \
         -rpcconnect=localhost \
-        -rpcport=8332 \
+        -rpcport=18332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
         createwallet "miner"
@@ -66,7 +66,7 @@ if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
     echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
     bitcoin-cli \
         -rpcconnect=localhost \
-        -rpcport=8332 \
+        -rpcport=18332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
         importmulti "[{ \"scriptPubKey\": { \"address\": \"${BTC_ADDRESS}\" }, \"timestamp\":${SCAN_TIME_EPOCH}, \"keys\": [ \"${WIF}\" ]}]" "{\"rescan\": true}"
@@ -74,7 +74,7 @@ fi
 echo "[ install_stacks.sh ] - Bitcoin address info for ${BTC_ADDRESS}"
 bitcoin-cli \
     -rpcconnect=localhost \
-    -rpcport=8332 \
+    -rpcport=18332 \
     -rpcuser=btcuser \
     -rpcpassword=btcpass \
     getaddressinfo "${BTC_ADDRESS}"
@@ -94,12 +94,12 @@ wait_time_for_microblocks = 10000
 
 [burnchain]
 chain = "bitcoin"
-mode = "mainnet"
+mode = "xenon"
 peer_host = "127.0.0.1"
 username = "btcuser" # bitcoin rpc username from bitcoin config
 password = "btcpass" # bitcoin rpc password from bitcoin config
-rpc_port = 8332      # bitcoin rpc port from bitcoin config
-peer_port = 8333     # bitcoin p2p port from bitcoin config
+rpc_port = 18332      # bitcoin rpc port from bitcoin config
+peer_port = 18333     # bitcoin p2p port from bitcoin config
 satoshis_per_byte = 100
 #burn_fee_cap = 20000
 burn_fee_cap = 450000

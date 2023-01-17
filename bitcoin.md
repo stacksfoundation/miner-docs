@@ -6,7 +6,9 @@ Either a source install or running a pre-compiled bitcoin binary is required to 
 These instructions describe how to install v22.0 of the Bitcoin Blockchain - update the version number as new versions become available.
 
 ## Scripted install
+
 You can use the [scripts/install_bitcoin.sh](./scripts/install_bitcoin.sh) to install and start bitcoin
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash
 ```
@@ -48,19 +50,23 @@ $ sudo make install
 ```
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
-disablewallet=0
+testnet=1
+#disablewallet=1
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
 rpcallowip=0.0.0.0/0
-bind=0.0.0.0:8333
-rpcbind=0.0.0.0:8332
 dbcache=512
 banscore=1
 rpcthreads=256
 rpcworkqueue=256
 rpctimeout=100
 txindex=1
+
+[test]
+bind=0.0.0.0:18333
+rpcbind=0.0.0.0:18332
+rpcport=18332
 EOF'
 ```
 
@@ -130,7 +136,6 @@ $ sudo systemctl enable bitcoin.service
 $ sudo systemctl start bitcoin.service
 ```
 
-
 **now we wait a few days until bitcoin syncs to chain tip**
 
 ```
@@ -141,11 +146,11 @@ $ sudo tail -f /bitcoin/debug.log
 
 $ bitcoin-cli \
  -rpcconnect=localhost \
- -rpcport=8332 \
+ -rpcport=18332 \
  -rpcuser=btcuser \
  -rpcpassword=btcpass \
 getblockchaininfo | jq .blocks
-745635
+2416844
 ```
 
 ## Next Step(s)

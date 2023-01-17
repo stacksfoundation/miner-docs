@@ -1,7 +1,9 @@
 # Stacks Blockchain Miner
 
 ## Scripted install
+
 You can use the [scripts/install_stacks.sh](./scripts/install_stacks.sh) to install and start the stacks blockchain
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash
 ```
@@ -38,12 +40,12 @@ wait_time_for_microblocks = 10000
 
 [burnchain]
 chain = "bitcoin"
-mode = "mainnet"
+mode = "xenon"
 peer_host = "127.0.0.1"
 username = "btcuser" # bitcoin rpc username from bitcoin config
 password = "btcpass" # bitcoin rpc password from bitcoin config
-rpc_port = 8332      # bitcoin rpc port from bitcoin config
-peer_port = 8333     # bitcoin p2p port from bitcoin config
+rpc_port = 18332      # bitcoin rpc port from bitcoin config
+peer_port = 18333     # bitcoin p2p port from bitcoin config
 satoshis_per_byte = 100
 #burn_fee_cap = 20000
 burn_fee_cap = 450000
@@ -128,4 +130,3 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl enable stacks.service
 $ sudo systemctl start stacks.service
 ```
-
