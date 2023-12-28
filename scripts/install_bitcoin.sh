@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-BTC_VERSION=22.0
+BTC_VERSION=0.20.0
 
 REQUIRED_DIRS=(
     /bitcoin

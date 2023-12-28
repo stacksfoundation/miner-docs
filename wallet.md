@@ -41,13 +41,6 @@ $ bitcoin-cli \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-createwallet "miner"
-$ sudo systemctl restart bitcoin
-$ bitcoin-cli \
-  -rpcconnect=localhost \
-  -rpcport=8332 \
-  -rpcuser=btcuser \
-  -rpcpassword=btcpass \
 importmulti '[{ "scriptPubKey": { "address": "<npx btcAddress>" }, "timestamp":"now", "keys": [ "<npx wif>" ]}]' '{"rescan": true}'
 $ bitcoin-cli \
   -rpcconnect=localhost \

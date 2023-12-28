@@ -49,17 +49,7 @@ WIF=$(sudo cat  /root/keychain.json | jq .keyInfo.wif | tr -d '"')
 BTC_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.btcAddress | tr -d '"')
 STX_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.address | tr -d '"')
 
-if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
-    echo "[ install_stacks.sh ] - Creating bitcoin wallet"
-    bitcoin-cli \
-        -rpcconnect=localhost \
-        -rpcport=8332 \
-        -rpcuser=btcuser \
-        -rpcpassword=btcpass \
-        createwallet "miner"
-
-    echo "[ install_stacks.sh ] - Restarting bitcoin"
-    sudo systemctl restart bitcoin
+if [ ! -f "/bitcoin/wallet.dat" ]; then
     echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
     sleep 120
 

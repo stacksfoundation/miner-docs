@@ -6,7 +6,9 @@ Either a source install or running a pre-compiled bitcoin binary is required to 
 These instructions describe how to install v22.0 of the Bitcoin Blockchain - update the version number as new versions become available.
 
 ## Scripted install
+
 You can use the [scripts/install_bitcoin.sh](./scripts/install_bitcoin.sh) to install and start bitcoin
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash
 ```
@@ -17,16 +19,18 @@ Since we'll be importing a wallet into bitcoin, it's **highly recommended** that
 That said, to run a pre-compiled binary of `bitcoind`, you can download and install the binary using these commands:
 
 ```
-$ export BTC_VERSION=22.0
-$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-${BTC_VERSION}/bitcoin-${BTC_VERSION}-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-22.0.tar.gz
+$ export BTC_VERSION=0.20.0
+$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-${BTC_VERSION}/bitcoin-${BTC_VERSION}-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-${BTC_VERSION}.tar.gz
 $ sudo tar -xzvf /tmp/bitcoin-${BTC_VERSION}.tar.gz -C /tmp
 $ sudo cp /tmp/bitcoin-${BTC_VERSION}/bin/* /usr/local/bin/
 ```
 
+_later versions of bitcoin use a named wallet, as of stacks version `2.4.0.0.0` there is only support for using a default bitcoin wallet_
+
 ## Source Install
 
 ```
-$ export BTC_VERSION=22.0
+$ export BTC_VERSION=0.20.0
 $ git clone --depth 1 --branch v${BTC_VERSION} https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
 $ sh contrib/install_db4.sh .
 $ ./autogen.sh
@@ -129,7 +133,6 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl enable bitcoin.service
 $ sudo systemctl start bitcoin.service
 ```
-
 
 **now we wait a few days until bitcoin syncs to chain tip**
 
