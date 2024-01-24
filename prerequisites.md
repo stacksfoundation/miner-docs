@@ -58,7 +58,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfou
 The following packages are required, and used by the rest of these docs
 
 ```bash
-$ curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+$ curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 $ sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
     jq \

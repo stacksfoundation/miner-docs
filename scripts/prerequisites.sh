@@ -15,7 +15,7 @@ for DIR in "${REQUIRED_DIRS[@]}"; do
 done
 
 echo "[ prerequisites.sh ] - Installing nodejs v16 apt repository"
-curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 
 
 echo "[ prerequisites.sh ] - Installing required system packages"
