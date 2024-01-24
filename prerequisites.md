@@ -62,7 +62,7 @@ $ curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 $ sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
     jq \
-    netcat \
+    ncat \
     nodejs \
     git \
     autoconf \

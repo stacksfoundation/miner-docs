@@ -14,7 +14,7 @@ for DIR in "${REQUIRED_DIRS[@]}"; do
     fi
 done
 
-echo "[ prerequisites.sh ] - Installing nodejs v16 apt repository"
+echo "[ prerequisites.sh ] - Installing nodejs v18 apt repository"
 curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 
 
@@ -22,7 +22,7 @@ echo "[ prerequisites.sh ] - Installing required system packages"
 sudo apt-get update -y && sudo apt-get install -y \
     build-essential \
     jq \
-    netcat \
+    ncat \
     nodejs \
     git \
     autoconf \
