@@ -1,7 +1,9 @@
 # Stacks Blockchain Miner
 
 ## Scripted install
+
 You can use the [scripts/install_stacks.sh](./scripts/install_stacks.sh) to install and start the stacks blockchain
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_stacks.sh | bash
 ```
@@ -81,8 +83,8 @@ ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
 
 [Service]
-ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
-ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
+ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
+ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
 ExecStopPost=/bin/sh -c "if [ -f \"/run/stacks-blockchain/stacks.pid\" ]; then rm -f /run/stacks-blockchain/stacks.pid; fi"
 
 # Process management
@@ -128,4 +130,3 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl enable stacks.service
 $ sudo systemctl start stacks.service
 ```
-
