@@ -52,13 +52,14 @@ $ sudo make install
 ```
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
+daemon=1
 disablewallet=0
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
-rpcallowip=0.0.0.0/0
-bind=0.0.0.0:8333
-rpcbind=0.0.0.0:8332
+rpcallowip=127.0.0.1
+bind=127.0.0.1:8333
+rpcbind=127.0.0.1:8332
 dbcache=512
 banscore=1
 rpcthreads=256
@@ -142,12 +143,7 @@ $ sudo tail -f /bitcoin/debug.log
 2022-07-19T14:33:25Z New outbound peer connected: version: 70015, blocks=745635, peer=118 (block-relay-only)
 ...
 
-$ bitcoin-cli \
- -rpcconnect=localhost \
- -rpcport=8332 \
- -rpcuser=btcuser \
- -rpcpassword=btcpass \
-getblockchaininfo | jq .blocks
+$ bitcoin-cli getblockchaininfo | jq .blocks
 745635
 ```
 
