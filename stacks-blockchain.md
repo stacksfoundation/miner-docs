@@ -15,6 +15,7 @@ $ git clone --depth 1 --branch master https://github.com/stacks-network/stacks-b
 $ cd $HOME/stacks-blockchain/testnet/stacks-node
 $ cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 $ sudo cp -a $HOME/stacks-blockchain/target/release/stacks-node /usr/local/bin/stacks-node
+$ sudo rm -rf $HOME/stacks-blockchain
 ```
 
 ### Generate stacks wallet keychain
@@ -35,10 +36,11 @@ bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459
 seed = "<npx privateKey from wallet.md>"
 local_peer_seed = "<npx privateKey from wallet.md>"
 miner = true
-mine_microblocks = true
+mine_microblocks = false
 wait_time_for_microblocks = 10000
 
 [burnchain]
+wallet_name = "miner"
 chain = "bitcoin"
 mode = "xenon"
 peer_host = "127.0.0.1"
@@ -83,8 +85,8 @@ ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
 
 [Service]
-ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
-ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
+ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
+ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
 ExecStopPost=/bin/sh -c "if [ -f \"/run/stacks-blockchain/stacks.pid\" ]; then rm -f /run/stacks-blockchain/stacks.pid; fi"
 
 # Process management
@@ -97,7 +99,7 @@ KillSignal=SIGTERM
 
 # Directory creation and permissions
 ####################################
-# Run as bitcoin:bitcoin
+# Run as stacks:stacks
 User=stacks
 Group=stacks
 RuntimeDirectory=stacks-blockchain
@@ -125,7 +127,7 @@ EOF'
 
 ## Enable service and start stacks
 
-```
+```bash
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable stacks.service
 $ sudo systemctl start stacks.service

@@ -19,7 +19,7 @@ git clone --depth 1 --branch master https://github.com/stacks-network/stacks-blo
 echo "[ install_stacks.sh ] - Build and install stacks-blockchain binary -> /usr/local/bin/stacks-node"
 cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 sudo cp -a "${HOME}/stacks-blockchain/target/release/stacks-node" "/usr/local/bin/stacks-node"
-
+sudo rm -rf "${HOME}/stacks-blockchain"
 
 
 echo "[ install_stacks.sh ] - Creating stacks user/group and setting filesytem permissions"
@@ -52,20 +52,34 @@ STX_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.address | tr -d '"')
 if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
     echo "[ install_stacks.sh ] - Creating bitcoin wallet"
     bitcoin-cli \
-        -rpcconnect=localhost \
+        -rpcconnect=127.0.0.1 \
         -rpcport=18332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
-        createwallet "miner"
+        createwallet "miner" \
+        false \
+        false \
+        "" \
+        false \
+        false \
+        true
 
     echo "[ install_stacks.sh ] - Restarting bitcoin"
     sudo systemctl restart bitcoin
     echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
     sleep 120
 
+    echo "[ install_stacks.sh ] - Loading bitcoin wallet"
+    bitcoin-cli \
+        -rpcconnect=127.0.0.1 \
+        -rpcport=18332 \
+        -rpcuser=btcuser \
+        -rpcpassword=btcpass \
+        loadwallet miner
+
     echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
     bitcoin-cli \
-        -rpcconnect=localhost \
+        -rpcconnect=127.0.0.1 \
         -rpcport=18332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
@@ -73,7 +87,7 @@ if [ ! -f "/bitcoin/miner/wallet.dat" ]; then
 fi
 echo "[ install_stacks.sh ] - Bitcoin address info for ${BTC_ADDRESS}"
 bitcoin-cli \
-    -rpcconnect=localhost \
+    -rpcconnect=127.0.0.1 \
     -rpcport=18332 \
     -rpcuser=btcuser \
     -rpcpassword=btcpass \
@@ -131,8 +145,8 @@ ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
 
 [Service]
-ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
-ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config=/etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
+ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
+ExecStartPost=/bin/sh -c "umask 022; sleep 2 && pgrep -f \"/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml\" > /run/stacks-blockchain/stacks.pid"
 ExecStopPost=/bin/sh -c "if [ -f \"/run/stacks-blockchain/stacks.pid\" ]; then rm -f /run/stacks-blockchain/stacks.pid; fi"
 
 # Process management
@@ -145,7 +159,7 @@ KillSignal=SIGTERM
 
 # Directory creation and permissions
 ####################################
-# Run as bitcoin:bitcoin
+# Run as stacks:stacks
 User=stacks
 Group=stacks
 RuntimeDirectory=stacks-blockchain

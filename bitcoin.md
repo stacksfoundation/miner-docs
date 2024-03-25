@@ -1,13 +1,13 @@
 # Install Bitcoin Blockchain
 
-**Note:** `btcuser` and `btcpass` are used for bitcoin RPC auth in this doc. Change as appropriate for your environment (be sure to update any configs etc used in these docs)
+**Note:** `btcuser` and `btcpass` are used for bitcoin RPC auth in this doc. Change as appropriate for your environment (be sure to update any configs etc used in these docs).
 
 Either a source install or running a pre-compiled bitcoin binary is required to run a stacks miner. \
-These instructions describe how to install v22.0 of the Bitcoin Blockchain - update the version number as new versions become available.
+These instructions describe how to install v25.0 of the Bitcoin Blockchain - update the version number as new versions become available.
 
 ## Scripted install
 
-You can use the [scripts/install_bitcoin.sh](./scripts/install_bitcoin.sh) to install and start bitcoin
+You can use the [scripts/install_bitcoin.sh](./scripts/install_bitcoin.sh) to install and start bitcoin:
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfoundation/miner-docs/main/scripts/install_bitcoin.sh | bash
@@ -18,27 +18,37 @@ curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/stacksfou
 Since we'll be importing a wallet into bitcoin, it's **highly recommended** that Bitcoin is compiled locally. \
 That said, to run a pre-compiled binary of `bitcoind`, you can download and install the binary using these commands:
 
-```
-$ export BTC_VERSION=22.0
-$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-${BTC_VERSION}/bitcoin-${BTC_VERSION}-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-22.0.tar.gz
+```bash
+$ export BTC_VERSION=25.0
+$ sudo curl -L https://bitcoin.org/bin/bitcoin-core-${BTC_VERSION}/bitcoin-${BTC_VERSION}-x86_64-linux-gnu.tar.gz -o /tmp/bitcoin-${BTC_VERSION}.tar.gz
 $ sudo tar -xzvf /tmp/bitcoin-${BTC_VERSION}.tar.gz -C /tmp
 $ sudo cp /tmp/bitcoin-${BTC_VERSION}/bin/* /usr/local/bin/
 ```
 
 ## Source Install
 
-```
-$ export BTC_VERSION=22.0
+```bash
+$ export BTC_VERSION=25.0
 $ git clone --depth 1 --branch v${BTC_VERSION} https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin
-$ sh contrib/install_db4.sh .
+$ make -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_NATPMP=1 NO_UPNP=1 NO_ZMQ=1 NO_USDT=1
 $ ./autogen.sh
-$ export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" \
- --disable-gui-tests \
- --enable-static \
- --without-miniupnpc \
- --with-pic \
- --enable-cxx \
- --with-boost-libdir=/usr/lib/x86_64-linux-gnu
+$ export BDB_PREFIX="$(ls -d $(pwd)/depends/* | grep "linux-gnu")"
+$ export CXXFLAGS="-O2"
+$ ./configure \
+  CXX=clang++ \
+  CC=clang \
+  BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+  BDB_CFLAGS="-I${BDB_PREFIX}/include" \
+    --includedir=${BIN_DIR}/include \
+    --bindir=${BIN_DIR}/bin \
+    --mandir=${BIN_DIR}/share/man/man1 \
+    --disable-gui-tests \
+    --disable-tests \
+    --without-miniupnpc \
+    --with-pic \
+    --enable-cxx \
+    --enable-static \
+    --disable-shared
 $ make -j2
 $ sudo make install
 ```
@@ -47,7 +57,7 @@ $ sudo make install
 
 **Note**: This sample config is open to the world for RPC. It can be restricted to localhost (`127.0.0.1`), **or** you can firewall the VM so it's only accessible from specific IP's.
 
-```
+```bash
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
 testnet=1
@@ -72,14 +82,14 @@ EOF'
 
 ## Add bitcoin user and set file ownership
 
-```
+```bash
 $ sudo useradd bitcoin
 $ sudo chown -R bitcoin:bitcoin /bitcoin/
 ```
 
 ## Install bitcoin systemd unit
 
-```
+```bash
 $ sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
 [Unit]
 Description=Bitcoin daemon
@@ -130,7 +140,7 @@ EOF'
 
 ## Enable bitcoin service and start bitcoin
 
-```
+```bash
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable bitcoin.service
 $ sudo systemctl start bitcoin.service
@@ -138,19 +148,19 @@ $ sudo systemctl start bitcoin.service
 
 **now we wait a few days until bitcoin syncs to chain tip**
 
-```
+```bash
 $ sudo tail -f /bitcoin/debug.log
-2022-07-19T14:33:12Z UpdateTip: new best=00000000000000000003c9ed0f9961b984e40082faa35bb9244f47ba0d68d6f2 height=745635 version=0x27ffe004 log2_work=93.635332 tx=750040284 date='2022-07-19T14:32:43Z' progress=1.000000 cache=161.3MiB(1219743txo)
-2022-07-19T14:33:25Z New outbound peer connected: version: 70015, blocks=745635, peer=118 (block-relay-only)
+2024-03-25T23:05:03Z UpdateTip: new best=000000000000000abe3d9e2927ae94b07ed86309c69ad394de6927a17353ea2e height=2583513 version=0x20c00000 log2_work=75.725949 tx=74793990 date='2024-03-25T22:56:59Z' progress=1.000000 cache=0.3MiB(2329txo)
+2024-03-25T23:05:04Z New outbound peer connected: version: 70015, blocks=2583513, peer=3 (outbound-full-relay)
 ...
 
 $ bitcoin-cli \
- -rpcconnect=localhost \
+ -rpcconnect=127.0.0.1 \
  -rpcport=18332 \
  -rpcuser=btcuser \
  -rpcpassword=btcpass \
 getblockchaininfo | jq .blocks
-2416844
+2583513
 ```
 
 ## Next Step(s)

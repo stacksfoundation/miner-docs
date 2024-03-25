@@ -40,7 +40,7 @@ $ sudo mkdir -p /etc/stacks-blockchain
 
 Example:
 
-```
+```bash
 /dev/xvdb1 /bitcoin xfs rw,relatime,attr2,inode64,noquota
 /dev/xvdc1 /stacks-blockchain xfs rw,relatime,attr2,inode64,noquota
 ```
@@ -60,30 +60,37 @@ The following packages are required, and used by the rest of these docs
 ```bash
 $ curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 $ sudo apt-get update -y && sudo apt-get install -y \
-    build-essential \
-    jq \
-    netcat \
-    nodejs \
-    git \
     autoconf \
-    libboost-system-dev \
-    libboost-filesystem-dev \
-    libboost-thread-dev \
-    libboost-chrono-dev \
-    libevent-dev \
-    libzmq5 \
-    libtool \
-    m4 \
     automake \
-    pkg-config \
-    libtool \
-    libboost-system-dev \
-    libboost-filesystem-dev \
+    autotools-dev \
+    build-essential \
+    bsdmainutils \
+    clang \
+    curl \
+    git \
+    jq \
     libboost-chrono-dev \
+    libboost-dev \
+    libboost-filesystem-dev \
+    libboost-iostreams-dev \
     libboost-program-options-dev \
+    libboost-system-dev \
     libboost-test-dev \
     libboost-thread-dev \
-    libboost-iostreams-dev
+    libczmq-dev \
+    libevent-dev \
+    libnatpmp-dev \
+    libminiupnpc-dev \
+    libssl-dev \
+    libsqlite3-dev \
+    libtool \
+    libzmq5 \
+    m4 \
+    netcat \
+    nodejs \
+    pkg-config \
+    python3 \
+    wget
 $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && source $HOME/.cargo/env
 $ sudo npm install -g @stacks/cli rimraf shx
 ```

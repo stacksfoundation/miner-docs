@@ -20,30 +20,37 @@ curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
 echo "[ prerequisites.sh ] - Installing required system packages"
 sudo apt-get update -y && sudo apt-get install -y \
-    build-essential \
-    jq \
-    netcat \
-    nodejs \
-    git \
     autoconf \
-    libboost-system-dev \
-    libboost-filesystem-dev \
-    libboost-thread-dev \
-    libboost-chrono-dev \
-    libevent-dev \
-    libzmq5 \
-    libtool \
-    m4 \
     automake \
-    pkg-config \
-    libtool \
-    libboost-system-dev \
-    libboost-filesystem-dev \
+    autotools-dev \
+    build-essential \
+    bsdmainutils \
+    clang \
+    curl \
+    git \
+    jq \
     libboost-chrono-dev \
+    libboost-dev \
+    libboost-filesystem-dev \
+    libboost-iostreams-dev \
     libboost-program-options-dev \
+    libboost-system-dev \
     libboost-test-dev \
     libboost-thread-dev \
-    libboost-iostreams-dev
+    libczmq-dev \
+    libevent-dev \
+    libnatpmp-dev \
+    libminiupnpc-dev \
+    libssl-dev \
+    libsqlite3-dev \
+    libtool \
+    libzmq5 \
+    m4 \
+    netcat \
+    nodejs \
+    pkg-config \
+    python3 \
+    wget
 
 echo "[ prerequisites.sh ] - Installing Rust"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
