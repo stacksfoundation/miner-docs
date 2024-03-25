@@ -54,9 +54,8 @@ $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
 daemon=1
 disablewallet=0
-datadir=/bitcoin
-rpcuser=btcuser
-rpcpassword=btcpass
+rpcuser=1
+rpcpassword=1
 rpcallowip=127.0.0.1
 bind=127.0.0.1:8333
 rpcbind=127.0.0.1:8332
