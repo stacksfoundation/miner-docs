@@ -142,7 +142,7 @@ $ sudo tail -f /bitcoin/debug.log
 2022-07-19T14:33:25Z New outbound peer connected: version: 70015, blocks=745635, peer=118 (block-relay-only)
 ...
 
-$ bitcoin-cli getblockchaininfo | jq .blocks
+$ bitcoin-cli getblockchaininfo | grep blocks
 745635
 ```
 
