@@ -15,6 +15,10 @@ If using the **Scripted install** section of [stacks-blockchain.md](./stacks-blo
 
 **save this output in a safe place!**
 
+
+THIS IS AN EXAMPLE USING A TESTNET KEYCHAIN DONT ACTUALLY USE THIS ... USE YOUR OWN KEYCHAIN AND BACK IT UP
+
+
 ```bash
 $ cd $HOME && npm install @stacks/cli shx rimraf
 $ npx @stacks/cli make_keychain 2>/dev/null | jq
@@ -36,18 +40,15 @@ We'll be using the wallet values from the previous `npx` command, "btcAddress" a
 _Import will only be successful after bitcoin has fully synced_
 
 ```bash
-$ bitcoin-cli \
-  -rpcconnect=localhost \
-  -rpcport=8332 \
-  -rpcuser=btcuser \
-  -rpcpassword=btcpass \
-importmulti '[{ "scriptPubKey": { "address": "<npx btcAddress>" }, "timestamp":"now", "keys": [ "<npx wif>" ]}]' '{"rescan": true}'
-$ bitcoin-cli \
-  -rpcconnect=localhost \
-  -rpcport=8332 \
-  -rpcuser=btcuser \
-  -rpcpassword=btcpass \
-getaddressinfo <npx btcAddress>
+bitcoin-cli createwallet "your-wallet-name" false false "" false false true
+
+bitcoin-cli -rpcwallet=your-wallet-name importprivkey "YOUR_PRIVATE_KEY_WIF_HERE"
+
+
+
 ```
 
 Once imported, the wallet will need to be funded with some bitcoin.
+
+THEN YOU MUST ACTUALLY FUND YOUR BITCOIN MINING WALLET USING THE BTCADDRESS FROM YOUR KEYCHAIN WHICH IS NOW LINKED TO YOUR BITCOIN-QT OR BITCOIND AND CHECK FOR UTXOs AND YOUR BITCOIN-QT WALLET MUST BE RUNNING WHILE YOU USE STACKS-CORE NODE AND IT MUST BE 100% SYNCED with a CHECKMARK
+
