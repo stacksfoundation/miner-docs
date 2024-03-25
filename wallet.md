@@ -16,7 +16,6 @@ If using the **Scripted install** section of [stacks-blockchain.md](./stacks-blo
 **save this output in a safe place!**
 
 
-THIS IS AN EXAMPLE USING A TESTNET KEYCHAIN DONT ACTUALLY USE THIS ... USE YOUR OWN KEYCHAIN AND BACK IT UP
 
 
 ```bash
