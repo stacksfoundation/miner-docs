@@ -33,17 +33,20 @@ rpc_bind = "0.0.0.0:20443"
 p2p_bind = "0.0.0.0:20444"
 bootstrap_node = "02196f005965cebe6ddc3901b7b1cc1aa7a88f305bb8c5893456b8f9a605923893@seed.mainnet.hiro.so:20444"
 seed = "<npx privateKey from wallet.md>"
-# local_peer_seed = "" ## this value isn't required and is only used in peer networking
+local_peer_seed =  "<npx privateKey from wallet.md>"
 miner = true
-mine_microblocks = true
+
+#mine_microblocks = true
+
 wait_time_for_microblocks = 10000
 
 [burnchain]
+wallet_name = "your-wallet-name"
 chain = "bitcoin"
 mode = "mainnet"
 peer_host = "127.0.0.1"
-username = "btcuser" # bitcoin rpc username from bitcoin config
-password = "btcpass" # bitcoin rpc password from bitcoin config
+username = "1" # bitcoin rpc username from bitcoin config
+password = "1" # bitcoin rpc password from bitcoin config
 rpc_port = 8332      # bitcoin rpc port from bitcoin config
 peer_port = 8333     # bitcoin p2p port from bitcoin config
 satoshis_per_byte = 100
