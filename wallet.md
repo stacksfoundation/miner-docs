@@ -41,7 +41,7 @@ $ bitcoin-cli \
   -rpcport=18332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-  createwallet "miner"
+  createwallet "miner" \
   false \
   false \
   "" \
