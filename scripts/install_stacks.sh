@@ -21,7 +21,6 @@ cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 sudo cp -a "${HOME}/stacks-blockchain/target/release/stacks-node" "/usr/local/bin/stacks-node"
 
 
-
 echo "[ install_stacks.sh ] - Creating stacks user/group and setting filesytem permissions"
 sudo useradd stacks
 sudo chown -R stacks:stacks /stacks-blockchain/
@@ -50,12 +49,36 @@ BTC_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.btcAddress | tr -d '"'
 STX_ADDRESS=$(sudo cat  /root/keychain.json | jq .keyInfo.address | tr -d '"')
 
 if [ ! -f "/bitcoin/wallet.dat" ]; then
+    echo "[ install_stacks.sh ] - Creating bitcoin wallet"
+    bitcoin-cli \
+        -rpcconnect=127.0.0.1 \
+        -rpcport=8332 \
+        -rpcuser=btcuser \
+        -rpcpassword=btcpass \
+        createwallet "miner" \
+        false \
+        false \
+        "" \
+        false \
+        false \
+        true
+
+    echo "[ install_stacks.sh ] - Restarting bitcoin"
+    sudo systemctl restart bitcoin
     echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
     sleep 120
 
+    echo "[ install_stacks.sh ] - Loading bitcoin wallet"
+    bitcoin-cli \
+        -rpcconnect=127.0.0.1 \
+        -rpcport=8332 \
+        -rpcuser=btcuser \
+        -rpcpassword=btcpass \
+        loadwallet miner
+
     echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
     bitcoin-cli \
-        -rpcconnect=localhost \
+        -rpcconnect=127.0.0.1 \
         -rpcport=8332 \
         -rpcuser=btcuser \
         -rpcpassword=btcpass \
@@ -63,7 +86,7 @@ if [ ! -f "/bitcoin/wallet.dat" ]; then
 fi
 echo "[ install_stacks.sh ] - Bitcoin address info for ${BTC_ADDRESS}"
 bitcoin-cli \
-    -rpcconnect=localhost \
+    -rpcconnect=127.0.0.1 \
     -rpcport=8332 \
     -rpcuser=btcuser \
     -rpcpassword=btcpass \
@@ -79,7 +102,7 @@ bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459
 seed = "PRIV_KEY"
 local_peer_seed = "PRIV_KEY"
 miner = true
-mine_microblocks = true
+mine_microblocks = false
 wait_time_for_microblocks = 10000
 
 [burnchain]
@@ -119,6 +142,7 @@ Requires=bitcoin.service
 After=bitcoin.service
 ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
+ConditionFileNotEmpty=/etc/stacks-blockchain/Config.toml
 
 [Service]
 ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
@@ -135,7 +159,7 @@ KillSignal=SIGTERM
 
 # Directory creation and permissions
 ####################################
-# Run as bitcoin:bitcoin
+# Run as stacks:stacks
 User=stacks
 Group=stacks
 RuntimeDirectory=stacks-blockchain

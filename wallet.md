@@ -37,17 +37,36 @@ _Import will only be successful after bitcoin has fully synced_
 
 ```bash
 $ bitcoin-cli \
-  -rpcconnect=localhost \
+  -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-importmulti '[{ "scriptPubKey": { "address": "<npx btcAddress>" }, "timestamp":"now", "keys": [ "<npx wif>" ]}]' '{"rescan": true}'
+  createwallet "miner" \
+  false \
+  false \
+  "" \
+  false \
+  false \
+  true
+$ sudo systemctl restart bitcoin
 $ bitcoin-cli \
-  -rpcconnect=localhost \
+  -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-getaddressinfo <npx btcAddress>
+  loadwallet miner
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  importmulti '[{ "scriptPubKey": { "address": "<npx btcAddress>" }, "timestamp":"now", "keys": [ "<npx wif>" ]}]' '{"rescan": true}'
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  getaddressinfo <npx btcAddress>
 ```
 
 Once imported, the wallet will need to be funded with some bitcoin.
