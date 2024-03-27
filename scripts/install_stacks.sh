@@ -19,7 +19,6 @@ git clone --depth 1 --branch master https://github.com/stacks-network/stacks-blo
 echo "[ install_stacks.sh ] - Build and install stacks-blockchain binary -> /usr/local/bin/stacks-node"
 cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 sudo cp -a "${HOME}/stacks-blockchain/target/release/stacks-node" "/usr/local/bin/stacks-node"
-sudo rm -rf "${HOME}/stacks-blockchain"
 
 
 echo "[ install_stacks.sh ] - Creating stacks user/group and setting filesytem permissions"

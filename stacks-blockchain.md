@@ -15,7 +15,6 @@ $ git clone --depth 1 --branch master https://github.com/stacks-network/stacks-b
 $ cd $HOME/stacks-blockchain/testnet/stacks-node
 $ cargo build --features monitoring_prom,slog_json --release --bin stacks-node
 $ sudo cp -a $HOME/stacks-blockchain/target/release/stacks-node /usr/local/bin/stacks-node
-$ sudo rm -rf $HOME/stacks-blockchain
 ```
 
 ### Generate stacks wallet keychain
