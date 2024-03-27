@@ -77,6 +77,9 @@ sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
 [Unit]
 Description=Bitcoin daemon
 After=network.target
+ConditionFileIsExecutable=/usr/local/bin/bitcoind
+ConditionPathExists=/bitcoin
+ConditionFileNotEmpty=/etc/bitcoin/bitcoin.conf
 
 [Service]
 ExecStart=/usr/local/bin/bitcoind -daemon \

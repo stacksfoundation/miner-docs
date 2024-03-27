@@ -82,6 +82,7 @@ Requires=bitcoin.service
 After=bitcoin.service
 ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
+ConditionFileNotEmpty=/etc/stacks-blockchain/Config.toml
 
 [Service]
 ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"

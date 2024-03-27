@@ -24,7 +24,6 @@ sudo apt-get update -y && sudo apt-get install -y \
     automake \
     autotools-dev \
     build-essential \
-    bsdmainutils \
     clang \
     curl \
     git \
