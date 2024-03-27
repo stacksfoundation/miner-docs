@@ -102,7 +102,7 @@ bootstrap_node = "02da7a464ac770ae8337a343670778b93410f2f3fef6bea98dd1c3e9224459
 seed = "PRIV_KEY"
 local_peer_seed = "PRIV_KEY"
 miner = true
-mine_microblocks = true
+mine_microblocks = false
 wait_time_for_microblocks = 10000
 
 [burnchain]

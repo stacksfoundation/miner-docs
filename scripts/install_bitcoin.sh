@@ -30,16 +30,14 @@ export CXXFLAGS="-O2"
   CC=clang \
   BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
   BDB_CFLAGS="-I${BDB_PREFIX}/include" \
-    --includedir=${BIN_DIR}/include \
-    --bindir=${BIN_DIR}/bin \
-    --mandir=${BIN_DIR}/share/man/man1 \
     --disable-gui-tests \
     --disable-tests \
     --without-miniupnpc \
     --with-pic \
     --enable-cxx \
     --enable-static \
-    --disable-shared
+    --disable-shared \
+    --bindir=/usr/local/bin
 make -j2
 
 echo "[ install_bitcoin.sh ] - Installing bitcoin"
