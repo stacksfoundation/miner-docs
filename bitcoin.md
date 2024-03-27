@@ -48,7 +48,7 @@ $ ./configure \
     --enable-cxx \
     --enable-static \
     --disable-shared \
-    --prefix=/usr/local
+    --bindir=/usr/local/bin
 $ make -j2
 $ sudo make install
 ```
