@@ -45,7 +45,7 @@ sudo apt-get update -y && sudo apt-get install -y \
     libtool \
     libzmq5 \
     m4 \
-    netcat \
+    ncat \
     nodejs \
     pkg-config \
     python3 \
