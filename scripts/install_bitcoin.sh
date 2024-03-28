@@ -63,7 +63,6 @@ rpcthreads=256
 rpcworkqueue=256
 rpctimeout=100
 txindex=1
-walletdir=/bitcoin/testnet3/wallets
 EOF'
 
 
