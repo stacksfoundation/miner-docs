@@ -72,6 +72,7 @@ rpctimeout=100
 txindex=1
 
 [test]
+walletdir=/bitcoin/testnet3/wallets
 bind=0.0.0.0:18333
 rpcbind=0.0.0.0:18332
 rpcport=18332
