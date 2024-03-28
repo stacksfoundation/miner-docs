@@ -31,7 +31,6 @@ WIF="privateKey from npx keychain"
 BTC_ADDRESS="btcAddress from npx keychain"
 echo "[ install_stacks.sh ] - Installing required js modules"
 cd "${HOME}" && npm install @stacks/cli shx rimraf
-SCAN_TIME_EPOCH=$(($(date +%s) - 3600)) # scan from 1 hour ago
 
 echo "[ install_stacks.sh ] - Generating keychain file?"
 CMD="sudo ls /root/keychain.json  2> /dev/null 1>/dev/null"
@@ -40,8 +39,10 @@ CHECK_KEYCHAIN_FILE="${?}"
 if [ ${CHECK_KEYCHAIN_FILE} != "0" ]; then
     echo "[ install_stacks.sh ] - Creating keychain file -> /root/keychain.json"
     sudo bash -c 'npx @stacks/cli make_keychain 2>/dev/null > /root/keychain.json'
+    SCAN_TIME_EPOCH=$(($(date +%s) - 3600)) # scan from 1 hour ago
 else
     echo "[ install_stacks.sh ] - Using existing keychain file -> /root/keychain.json"
+    SCAN_TIME_EPOCH=$((1)) # scan from genesis
 fi
 PRIV_KEY=$(sudo cat  /root/keychain.json | jq .keyInfo.privateKey | tr -d '"')
 WIF=$(sudo cat  /root/keychain.json | jq .keyInfo.wif | tr -d '"')
@@ -62,19 +63,6 @@ if [ ! -f "/bitcoin/wallet.dat" ]; then
         false \
         false \
         true
-
-    echo "[ install_stacks.sh ] - Restarting bitcoin"
-    sudo systemctl restart bitcoin
-    echo "[ install_stacks.sh ] - Sleeping for 120 seconds to allow bitcoin time to restart"
-    sleep 120
-
-    echo "[ install_stacks.sh ] - Loading bitcoin wallet"
-    bitcoin-cli \
-        -rpcconnect=127.0.0.1 \
-        -rpcport=8332 \
-        -rpcuser=btcuser \
-        -rpcpassword=btcpass \
-        loadwallet miner
 
     echo "[ install_stacks.sh ] - Importing btc address ${BTC_ADDRESS}"
     bitcoin-cli \
