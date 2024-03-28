@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-BTC_VERSION=0.20.0
+BTC_VERSION=25.0
 
 REQUIRED_DIRS=(
     /bitcoin
@@ -18,17 +18,26 @@ echo "[ install_bitcoin.sh ] - Cloning bitcoin from https://github.com/bitcoin/b
 git clone --depth 1 --branch v${BTC_VERSION} https://github.com/bitcoin/bitcoin /tmp/bitcoin && cd /tmp/bitcoin || exit 1
 
 echo "[ install_bitcoin.sh ] - Installing DB4"
-sh contrib/install_db4.sh .
+make -C depends NO_BOOST=1 NO_LIBEVENT=1 NO_QT=1 NO_SQLITE=1 NO_NATPMP=1 NO_UPNP=1 NO_ZMQ=1 NO_USDT=1
 
 echo "[ install_bitcoin.sh ] - Building Bitcoin"
 ./autogen.sh
-export BDB_PREFIX="/tmp/bitcoin/db4" && ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" \
-  --disable-gui-tests \
-  --enable-static \
-  --without-miniupnpc \
-  --with-pic \
-  --enable-cxx \
-  --with-boost-libdir=/usr/lib/x86_64-linux-gnu
+
+export BDB_PREFIX="$(ls -d $(pwd)/depends/* | grep "linux-gnu")"
+export CXXFLAGS="-O2"
+./configure \
+  CXX=clang++ \
+  CC=clang \
+  BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+  BDB_CFLAGS="-I${BDB_PREFIX}/include" \
+    --disable-gui-tests \
+    --disable-tests \
+    --without-miniupnpc \
+    --with-pic \
+    --enable-cxx \
+    --enable-static \
+    --disable-shared \
+    --bindir=/usr/local/bin
 make -j2
 
 echo "[ install_bitcoin.sh ] - Installing bitcoin"
@@ -62,6 +71,9 @@ sudo bash -c 'cat <<EOF> /etc/systemd/system/bitcoin.service
 [Unit]
 Description=Bitcoin daemon
 After=network.target
+ConditionFileIsExecutable=/usr/local/bin/bitcoind
+ConditionPathExists=/bitcoin
+ConditionFileNotEmpty=/etc/bitcoin/bitcoin.conf
 
 [Service]
 ExecStart=/usr/local/bin/bitcoind -daemon \

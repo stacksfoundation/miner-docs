@@ -13,7 +13,9 @@ If using the **Scripted install** section of [stacks-blockchain.md](./stacks-blo
 
 ## Generate stacks-blockchain keychain
 
-**save this output in a safe place!**
+Note: Skip this step if you already have a keychain generated.
+
+**Save this output in a safe place!**
 
 ```bash
 $ cd $HOME && npm install @stacks/cli shx rimraf
@@ -32,22 +34,72 @@ $ npx @stacks/cli make_keychain 2>/dev/null | jq
 
 ## Create bitcoin wallet and import it into this instance
 
+Note: Skip this step if you already have a keychain generated.
+
 We'll be using the wallet values from the previous `npx` command, "btcAddress" and "wif"
+
 _Import will only be successful after bitcoin has fully synced_
 
 ```bash
 $ bitcoin-cli \
-  -rpcconnect=localhost \
+  -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-importmulti '[{ "scriptPubKey": { "address": "<npx btcAddress>" }, "timestamp":"now", "keys": [ "<npx wif>" ]}]' '{"rescan": true}'
+  createwallet "miner" \
+  false \
+  false \
+  "" \
+  false \
+  false \
+  true
 $ bitcoin-cli \
-  -rpcconnect=localhost \
+  -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-getaddressinfo <npx btcAddress>
+  importmulti '[{ "scriptPubKey": { "address": "<your btcAddress>" }, "timestamp":"now", "keys": [ "<your wif>" ]}]' '{"rescan": true}'
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  getaddressinfo <your btcAddress>
 ```
 
 Once imported, the wallet will need to be funded with some bitcoin.
+
+## Import an existing address into this instance
+
+We'll be using an existing "btcAddress" and "wif"
+
+_Import will only be successful after bitcoin has fully synced_
+
+```bash
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  createwallet "miner" \
+  false \
+  false \
+  "" \
+  false \
+  false \
+  true
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  importprivkey "<your wif>"
+$ bitcoin-cli \
+  -rpcconnect=127.0.0.1 \
+  -rpcport=8332 \
+  -rpcuser=btcuser \
+  -rpcpassword=btcpass \
+  getaddressinfo <your btcAddress>
+```
+
+The `importprivkey` method will trigger a full wallet rescan, which may take a while. The wallet will need to be funded with some bitcoin if it wasn't previously.

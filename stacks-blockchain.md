@@ -35,10 +35,11 @@ bootstrap_node = "02196f005965cebe6ddc3901b7b1cc1aa7a88f305bb8c5893456b8f9a60592
 seed = "<npx privateKey from wallet.md>"
 # local_peer_seed = "" ## this value isn't required and is only used in peer networking
 miner = true
-mine_microblocks = true
+mine_microblocks = false
 wait_time_for_microblocks = 10000
 
 [burnchain]
+wallet_name = "miner"
 chain = "bitcoin"
 mode = "mainnet"
 peer_host = "127.0.0.1"
@@ -81,6 +82,7 @@ Requires=bitcoin.service
 After=bitcoin.service
 ConditionFileIsExecutable=/usr/local/bin/stacks-node
 ConditionPathExists=/stacks-blockchain/
+ConditionFileNotEmpty=/etc/stacks-blockchain/Config.toml
 
 [Service]
 ExecStart=/bin/sh -c "/usr/local/bin/stacks-node start --config /etc/stacks-blockchain/Config.toml >> /stacks-blockchain/miner.log 2>&1"
@@ -97,7 +99,7 @@ KillSignal=SIGTERM
 
 # Directory creation and permissions
 ####################################
-# Run as bitcoin:bitcoin
+# Run as stacks:stacks
 User=stacks
 Group=stacks
 RuntimeDirectory=stacks-blockchain
@@ -125,7 +127,7 @@ EOF'
 
 ## Enable service and start stacks
 
-```
+```bash
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable stacks.service
 $ sudo systemctl start stacks.service
