@@ -59,7 +59,7 @@ $ sudo make install
 $ sudo bash -c 'cat <<EOF> /etc/bitcoin/bitcoin.conf
 server=1
 testnet=1
-#disablewallet=1
+disablewallet=0
 datadir=/bitcoin
 rpcuser=btcuser
 rpcpassword=btcpass
