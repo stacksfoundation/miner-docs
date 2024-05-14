@@ -42,23 +42,27 @@ _Import will only be successful after bitcoin has fully synced_
 
 ```bash
 $ bitcoin-cli \
+  -named \
   -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
-  createwallet "miner" \
-  false \
-  false \
-  "" \
-  false \
-  false \
-  true
+  createwallet \
+  wallet_name="miner" \
+  disable_private_keys=false \
+  blank=false \
+  passphrase="" \
+  avoid_reuse=false \
+  descriptors=false \
+  load_on_startup=true
+
 $ bitcoin-cli \
   -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
   -rpcuser=btcuser \
   -rpcpassword=btcpass \
   importmulti '[{ "scriptPubKey": { "address": "<your btcAddress>" }, "timestamp":"now", "keys": [ "<your wif>" ]}]' '{"rescan": true}'
+
 $ bitcoin-cli \
   -rpcconnect=127.0.0.1 \
   -rpcport=8332 \
