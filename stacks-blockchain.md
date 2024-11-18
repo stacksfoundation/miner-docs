@@ -29,14 +29,12 @@ $ sudo cp -a $HOME/stacks-blockchain/target/release/stacks-node /usr/local/bin/s
 $ sudo bash -c 'cat <<EOF> /etc/stacks-blockchain/Config.toml
 [node]
 working_dir = "/stacks-blockchain"
-rpc_bind = "0.0.0.0:20443"
-p2p_bind = "0.0.0.0:20444"
-bootstrap_node = "02196f005965cebe6ddc3901b7b1cc1aa7a88f305bb8c5893456b8f9a605923893@seed.mainnet.hiro.so:20444"
+rpc_bind = "0.0.0.0:20443" # to prevent external access, change to 127.0.0.1
+p2p_bind = "0.0.0.0:20444" # to prevent external access, change to 127.0.0.1
+bootstrap_node = "02196f005965cebe6ddc3901b7b1cc1aa7a88f305bb8c5893456b8f9a605923893@seed.mainnet.hiro.so:20444,02539449ad94e6e6392d8c1deb2b4e61f80ae2a18964349bc14336d8b903c46a8c@cet.stacksnodes.org:20444,02ececc8ce79b8adf813f13a0255f8ae58d4357309ba0cedd523d9f1a306fcfb79@sgt.stacksnodes.org:20444,0303144ba518fe7a0fb56a8a7d488f950307a4330f146e1e1458fc63fb33defe96@est.stacksnodes.org:20444"
 seed = "<npx privateKey from wallet.md>"
-# local_peer_seed = "" ## this value isn't required and is only used in peer networking
 miner = true
 mine_microblocks = false
-wait_time_for_microblocks = 10000
 
 [burnchain]
 wallet_name = "miner"
@@ -52,16 +50,12 @@ satoshis_per_byte = 100
 burn_fee_cap = 450000
 
 [miner]
-first_attempt_time_ms = 5000
-subsequent_attempt_time_ms = 180000
-microblock_attempt_time_ms = 30000
+mining_key = "<npx privateKey from wallet.md>"
+activated_vrf_key_path = "/stacks-blockchain/saved_vrf_key.json"
 
-[fee_estimation]
-cost_estimator = "naive_pessimistic"
-fee_estimator = "scalar_fee_rate"
-cost_metric = "proportion_dot_product"
-log_error = true
-enabled = true
+[connection_options]
+private_neighbors = false
+
 EOF'
 ```
 
